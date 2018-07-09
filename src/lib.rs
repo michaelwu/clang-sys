@@ -460,6 +460,42 @@ cenum! {
         const CXCursor_DLLExport = 418,
         /// Only produced by `libclang` 3.8 and later.
         const CXCursor_DLLImport = 419,
+        /// Only produced by `libclang` 7.0 and later.
+        const CXCursor_NSReturnsRetained = 420,
+        /// Only produced by `libclang` 7.0 and later.
+        const CXCursor_NSReturnsNotRetained = 421,
+        /// Only produced by `libclang` 7.0 and later.
+        const CXCursor_NSReturnsAutoreleased = 422,
+        /// Only produced by `libclang` 7.0 and later.
+        const CXCursor_NSConsumesSelf = 423,
+        /// Only produced by `libclang` 7.0 and later.
+        const CXCursor_NSConsumed = 424,
+        /// Only produced by `libclang` 7.0 and later.
+        const CXCursor_ObjCException = 425,
+        /// Only produced by `libclang` 7.0 and later.
+        const CXCursor_ObjCNSObject = 426,
+        /// Only produced by `libclang` 7.0 and later.
+        const CXCursor_ObjCIndependentClass = 427,
+        /// Only produced by `libclang` 7.0 and later.
+        const CXCursor_ObjCPreciseLifetime = 428,
+        /// Only produced by `libclang` 7.0 and later.
+        const CXCursor_ObjCReturnsInnerPointer = 429,
+        /// Only produced by `libclang` 7.0 and later.
+        const CXCursor_ObjCRequiresSuper = 430,
+        /// Only produced by `libclang` 7.0 and later.
+        const CXCursor_ObjCRootClass = 431,
+        /// Only produced by `libclang` 7.0 and later.
+        const CXCursor_ObjCSubclassingRestricted = 432,
+        /// Only produced by `libclang` 7.0 and later.
+        const CXCursor_ObjCExplicitProtocolImpl = 433,
+        /// Only produced by `libclang` 7.0 and later.
+        const CXCursor_ObjCDesignatedInitializer = 434,
+        /// Only produced by `libclang` 7.0 and later.
+        const CXCursor_ObjCRuntimeVisible = 435,
+        /// Only produced by `libclang` 7.0 and later.
+        const CXCursor_ObjCBoxable = 436,
+        /// Only produced by `libclang` 7.0 and later.
+        const CXCursor_FlagEnum = 437,
         const CXCursor_PreprocessingDirective = 500,
         const CXCursor_MacroDefinition = 501,
         /// Duplicate of `CXCursor_MacroInstantiation`.
@@ -849,6 +885,12 @@ cenum! {
         const CXType_OCLQueue = 159,
         /// Only produced by `libclang` 5.0 and later.
         const CXType_OCLReserveID = 160,
+        /// Only produced by `libclang` 7.0 and later.
+        const CXType_ObjCObject = 161,
+        /// Only produced by `libclang` 7.0 and later.
+        const CXType_ObjCTypeParam = 162,
+        /// Only produced by `libclang` 7.0 and later.
+        const CXType_Attributed = 163,
     }
 }
 
@@ -869,6 +911,16 @@ cenum! {
         const CXVisibility_Hidden = 1,
         const CXVisibility_Protected = 2,
         const CXVisibility_Default = 3,
+    }
+}
+
+cenum! {
+    #[cfg(feature="gte_clang_6_0")]
+    enum CXTypeNullabilityKind {
+        const CXTypeNullability_NonNull = 0,
+        const CXTypeNullability_Nullable = 1,
+        const CXTypeNullability_Unspecified = 2,
+        const CXTypeNullability_Invalid = 3,
     }
 }
 
@@ -1049,6 +1101,12 @@ cenum! {
         const CXTranslationUnit_KeepGoing = 512;
         #[cfg(feature="gte_clang_5_0")]
         const CXTranslationUnit_SingleFileParse = 1024;
+        #[cfg(feature="gte_clang_6_0")]
+        const CXTranslationUnit_LimitSkipFunctionBodiesToPreamble = 2048;
+        #[cfg(feature="gte_clang_6_0")]
+        const CXTranslationUnit_IncludeAttributedTypes = 4096;
+        #[cfg(feature="gte_clang_6_0")]
+        const CXTranslationUnit_VisitImplicitAttributes = 8192;
     }
 }
 
@@ -1522,6 +1580,10 @@ link! {
     #[cfg(feature="gte_clang_6_0")]
     pub fn clang_Cursor_getObjCManglings(cursor: CXCursor) -> *mut CXStringSet;
     pub fn clang_Cursor_getObjCPropertyAttributes(cursor: CXCursor, reserved: c_uint) -> CXObjCPropertyAttrKind;
+    #[cfg(feature="gte_clang_6_0")]
+    pub fn clang_Cursor_getObjCPropertyGetterName(cursor: CXCursor) -> CXString;
+    #[cfg(feature="gte_clang_6_0")]
+    pub fn clang_Cursor_getObjCPropertySetterName(cursor: CXCursor) -> CXString;
     pub fn clang_Cursor_getObjCSelectorIndex(cursor: CXCursor) -> c_int;
     #[cfg(feature="gte_clang_3_7")]
     pub fn clang_Cursor_getOffsetOfField(cursor: CXCursor) -> c_longlong;
@@ -1600,13 +1662,27 @@ link! {
     #[cfg(feature="gte_clang_3_9")]
     pub fn clang_Type_getNamedType(type_: CXType) -> CXType;
     pub fn clang_Type_getNumTemplateArguments(type_: CXType) -> c_int;
+    #[cfg(feature="gte_clang_6_0")]
+    pub fn clang_Type_getObjCObjectBaseType(type_: CXType) -> CXType;
+    #[cfg(feature="gte_clang_6_0")]
+    pub fn clang_Type_getNumObjCProtocolRefs(type_: CXType) -> c_int;
+    #[cfg(feature="gte_clang_6_0")]
+    pub fn clang_Type_getObjCProtocolDecl(type_: CXType, index: c_uint) -> CXCursor;
+    #[cfg(feature="gte_clang_6_0")]
+    pub fn clang_Type_getNumObjCTypeArgs(type_: CXType) -> c_int;
+    #[cfg(feature="gte_clang_6_0")]
+    pub fn clang_Type_getObjCTypeArg(type_: CXType, index: c_uint) -> CXType;
     #[cfg(feature="gte_clang_3_9")]
     pub fn clang_Type_getObjCEncoding(type_: CXType) -> CXString;
     pub fn clang_Type_getOffsetOf(type_: CXType, field: *const c_char) -> c_longlong;
+    #[cfg(feature="gte_clang_6_0")]
+    pub fn clang_Type_getModifiedType(type_: CXType) -> CXType;
     pub fn clang_Type_getSizeOf(type_: CXType) -> c_longlong;
     pub fn clang_Type_getTemplateArgumentAsType(type_: CXType, index: c_uint) -> CXType;
     #[cfg(feature="gte_clang_5_0")]
     pub fn clang_Type_isTransparentTagTypedef(type_: CXType) -> c_uint;
+    #[cfg(feature="gte_clang_6_0")]
+    pub fn clang_Type_getNullability(type_: CXType) -> CXTypeNullabilityKind;
     #[cfg(feature="gte_clang_3_7")]
     pub fn clang_Type_visitFields(type_: CXType, visitor: CXFieldVisitor, data: CXClientData) -> CXVisitorResult;
     pub fn clang_annotateTokens(tu: CXTranslationUnit, tokens: *mut CXToken, n_tokens: c_uint, cursors: *mut CXCursor);
