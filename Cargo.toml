@@ -1,17 +1,16 @@
 [package]
 
-name = "clang-sys"
+name = "rustkit-clang-sys"
 authors = ["Kyle Mayes <kyle@mayeses.com>"]
 
-version = "0.23.0"
+version = "0.24.0"
 
 readme = "README.md"
 license = "Apache-2.0"
 
-description = "Rust bindings for libclang."
+description = "A temporary fork of clang-sys for RustKit."
 
-documentation = "https://kylemayes.github.io/clang-sys/3_5/clang_sys"
-repository = "https://github.com/KyleMayes/clang-sys"
+repository = "https://github.com/michaelwu/clang-sys"
 
 links = "clang"
 build = "build.rs"
